@@ -355,7 +355,6 @@ options:NSNumericSearch] != NSOrderedAscending)
 - (void)viewWillAppear:(BOOL)animated {
 	[super viewWillAppear:animated];
     if (!self.isAppNotificationsObserved) {
-        [self _addObservers];
         self.isAppNotificationsObserved = YES;
     }
 	
@@ -915,11 +914,15 @@ options:NSNumericSearch] != NSOrderedAscending)
                                              style:UIBarButtonItemStyleDone
                                             target:self
                                             action:@selector(_logoutWasPressed)];
+            UIBarButtonItem *spacer =
+            [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
+            spacer.width = 16.0;
+            
 			UINavigationItem *item =
             [[UINavigationItem alloc] initWithTitle:self.title];
-			item.leftBarButtonItem = leftButton;
+            item.leftBarButtonItems = @[spacer, leftButton];
 			item.hidesBackButton = YES;
-			
+            
 			[self.navBar pushNavigationItem:item animated:NO];
 			[mainWindow addSubview:self.navBar];
 		}
@@ -1314,7 +1317,7 @@ options:NSNumericSearch] != NSOrderedAscending)
     }
 	
 	// Make sure nav bar for logout is off the screen
-    if (!_isUsingNavbar) {
+    if (_isUsingNavbar) {
         [self.navBar removeFromSuperview];
         self.navBar = nil;
     }
@@ -1539,20 +1542,20 @@ options:NSNumericSearch] != NSOrderedAscending)
     _labelFontSize = 15.0;
     _passcodeFontSize = 33.0;
     _labelFont = UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad ?
-    [UIFont fontWithName: @"AvenirNext-Regular" size:_labelFontSize * _iPadFontSizeModifier] :
-    [UIFont fontWithName: @"AvenirNext-Regular" size:_labelFontSize];
+    [UIFont fontWithName: @"AvenirNext-Medium" size:_labelFontSize * _iPadFontSizeModifier] :
+    [UIFont fontWithName: @"AvenirNext-Medium" size:_labelFontSize];
     _passcodeFont = UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad ?
-    [UIFont fontWithName: @"AvenirNext-Regular" size: _passcodeFontSize * _iPadFontSizeModifier] :
-    [UIFont fontWithName: @"AvenirNext-Regular" size: _passcodeFontSize];
+    [UIFont fontWithName: @"AvenirNext-Medium" size: _passcodeFontSize * _iPadFontSizeModifier] :
+    [UIFont fontWithName: @"AvenirNext-Medium" size: _passcodeFontSize];
 }
 
 
 - (void)_loadColorDefaults {
     // Backgrounds
-    _backgroundColor = [UIColor colorWithRed:0.97f green:0.97f blue:1.0f alpha:1.00f];
+    _backgroundColor = [UIColor whiteColor];
     _passcodeBackgroundColor = [UIColor clearColor];
-    _coverViewBackgroundColor = [UIColor colorWithRed:0.97f green:0.97f blue:1.0f alpha:1.00f];
-    _failedAttemptLabelBackgroundColor =  [UIColor colorWithRed:0.8f green:0.1f blue:0.2f alpha:1.000f];
+    _coverViewBackgroundColor = [UIColor whiteColor];
+    _failedAttemptLabelBackgroundColor =  [UIColor colorWithRed:GREEN_r green:GREEN_g blue:GREEN_b alpha:1.000f];
     _enterPasscodeLabelBackgroundColor = [UIColor clearColor];
     
     // Text
@@ -1567,40 +1570,6 @@ options:NSNumericSearch] != NSOrderedAscending)
     _keychainTimerStartUsername = @"demoPasscodeTimerStart";
     _keychainServiceName = @"demoServiceName";
     _keychainTimerDurationUsername = @"passcodeTimerDuration";
-}
-
-
-- (void)_addObservers {
-    [[NSNotificationCenter defaultCenter]
-     addObserver: self
-     selector: @selector(_applicationDidEnterBackground)
-     name: UIApplicationDidEnterBackgroundNotification
-     object: nil];
-    [[NSNotificationCenter defaultCenter]
-     addObserver: self
-     selector: @selector(_applicationWillResignActive)
-     name: UIApplicationWillResignActiveNotification
-     object: nil];
-    [[NSNotificationCenter defaultCenter]
-     addObserver: self
-     selector: @selector(_applicationDidBecomeActive)
-     name: UIApplicationDidBecomeActiveNotification
-     object: nil];
-    [[NSNotificationCenter defaultCenter]
-     addObserver: self
-     selector: @selector(_applicationWillEnterForeground)
-     name: UIApplicationWillEnterForegroundNotification
-     object: nil];
-    [[NSNotificationCenter defaultCenter]
-     addObserver:self
-     selector:@selector(statusBarFrameOrOrientationChanged:)
-     name:UIApplicationDidChangeStatusBarOrientationNotification
-     object:nil];
-    [[NSNotificationCenter defaultCenter]
-     addObserver:self
-     selector:@selector(statusBarFrameOrOrientationChanged:)
-     name:UIApplicationDidChangeStatusBarFrameNotification
-     object:nil];
 }
 
 
